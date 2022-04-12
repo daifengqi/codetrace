@@ -4,7 +4,6 @@ import { statcodeConfigJs } from "../constants";
 const defaultConfig = {
   entry: "src/App.tsx",
   packageJsonPath: ["package.json"],
-  exclude: [],
   outputDir: ["pages", "modules"],
   extensions: [".js", ".ts", ".jsx", ".tsx"],
   aliasReplace: {

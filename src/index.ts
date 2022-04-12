@@ -1,7 +1,5 @@
 import cac from "cac";
-import fs from "fs";
-import { writeDefaultConfig } from "./config/write";
-import { statcode, statcodeConfigJs } from "./constants";
+import { statcode } from "./constants";
 import { run } from "./core/deps";
 
 export async function main() {

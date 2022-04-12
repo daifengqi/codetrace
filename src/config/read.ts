@@ -1,6 +1,12 @@
 import path from "path";
 import { statcodeConfigJs } from "../constants";
 
-const config = require(path.resolve(process.cwd(), statcodeConfigJs));
+let config;
+
+try {
+  config = require(path.resolve(process.cwd(), statcodeConfigJs));
+} catch (e) {
+  throw Error(`require statcode.config.js error -> ${e.message}`);
+}
 
 export { config };

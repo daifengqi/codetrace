@@ -12,7 +12,7 @@ log(config);
 /** Static variables */
 const ENTRY = config.entry;
 const PKG_JSON_LOCATION = config.packageJsonPath;
-const SELF_PACKAGES = config.exclude;
+const SELF_PACKAGES = config.include;
 const FINAL_DIR = config.outputDir;
 const possibleExtensions = config.extensions;
 const aliasReplace = config.aliasReplace;
@@ -131,7 +131,6 @@ function findDeps(filePath) {
   const currentFilePath = path.join("", filePath);
 
   const importList = [];
-  // TODO: fix ByteSec problem
   const content = fs.readFileSync(currentFilePath, { encoding: "utf-8" });
 
   const ast = parser.parse(content, {
