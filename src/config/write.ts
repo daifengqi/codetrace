@@ -1,9 +1,10 @@
 import fs from "fs";
 import { traceConfigJs } from "../constants";
+import { Config } from "../types";
 
-const defaultConfig = {
+const defaultConfig: Config = {
   entry: "src/main.js",
-  outputDir: ["pages", "modules"],
+  sourceDir: ["pages", "modules"],
   aliasReplace: {
     "@/": "apps/src/",
   },
