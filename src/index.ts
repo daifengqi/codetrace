@@ -7,7 +7,9 @@ export async function main() {
 
   cli
     .command("[...params]", "Create new project from cli.")
+    .option("--print, -p", "Print the logs while collecting the dependents.")
     .action((params, options) => {
+      console.log("options:", options);
       run();
     });
 
