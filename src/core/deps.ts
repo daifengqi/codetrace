@@ -1,8 +1,6 @@
 import fs from "fs";
 import path from "path";
-
 import { config } from "../config/read";
-
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 

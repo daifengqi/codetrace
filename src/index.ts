@@ -1,9 +1,9 @@
 import cac from "cac";
-import { statcode } from "./constants";
+import { trace } from "./constants";
 import { run } from "./core/deps";
 
 export async function main() {
-  const cli = cac(statcode);
+  const cli = cac(trace);
 
   cli
     .command("[...params]", "Create new project from cli.")

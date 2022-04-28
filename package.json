@@ -1,13 +1,13 @@
 {
-  "name": "statcode",
+  "name": "codetrace",
   "version": "0.0.1",
-  "description": "Code static analysis tool.",
+  "description": "Trace the influence of code change based on dependency graph; improve the efficiency of Quality Assessment.",
   "scripts": {
     "test": "npm run build && node dist/cli.js",
     "build": "tsc -p ./tsconfig.json"
   },
   "bin": {
-    "statcode": "dist/cli.js"
+    "trace": "dist/cli.js"
   },
   "keywords": [],
   "author": "",

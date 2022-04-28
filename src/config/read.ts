@@ -1,10 +1,10 @@
 import path from "path";
-import { statcodeConfigJs } from "../constants";
+import { traceConfigJs } from "../constants";
 
 let config;
 
 try {
-  config = require(path.resolve(process.cwd(), statcodeConfigJs));
+  config = require(path.resolve(process.cwd(), traceConfigJs));
 } catch (e) {
   throw Error(`require statcode.config.js error -> ${e.message}`);
 }

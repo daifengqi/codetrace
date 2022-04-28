@@ -1,5 +1,5 @@
 import fs from "fs";
-import { statcodeConfigJs } from "../constants";
+import { traceConfigJs } from "../constants";
 
 const defaultConfig = {
   entry: "src/App.tsx",
@@ -13,7 +13,7 @@ const defaultConfig = {
 
 export function writeDefaultConfig() {
   fs.writeFileSync(
-    statcodeConfigJs,
+    traceConfigJs,
     `module.exports = ${JSON.stringify(defaultConfig)}`
   );
 }

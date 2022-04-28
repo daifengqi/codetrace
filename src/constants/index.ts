@@ -1,4 +1,4 @@
-const statcode = "statcode";
-const statcodeConfigJs = "statcode.config.js";
+const trace = "statcode";
+const traceConfigJs = "trace.config.js";
 
-export { statcode, statcodeConfigJs };
+export { trace, traceConfigJs };
