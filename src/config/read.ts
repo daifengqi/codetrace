@@ -1,12 +1,17 @@
 import path from "path";
 import { traceConfigJs } from "../constants";
 
-let config;
+type Config = {
+  entry: string;
+  sourceDir: string[];
+  packageJsonPath?: string[];
+  includeDep?: string[];
+  extensions?: string[];
+  aliasReplace?: Object;
+  diffFiles?: string[];
+  showLogs?: boolean;
+};
 
-try {
-  config = require(path.resolve(process.cwd(), traceConfigJs));
-} catch (e) {
-  throw Error(`require statcode.config.js error -> ${e.message}`);
+export function readConfig(): Config {
+  return require(path.resolve(process.cwd(), traceConfigJs));
 }
-
-export { config };

@@ -2,10 +2,8 @@ import fs from "fs";
 import { traceConfigJs } from "../constants";
 
 const defaultConfig = {
-  entry: "src/App.tsx",
-  packageJsonPath: ["package.json"],
+  entry: "src/main.js",
   outputDir: ["pages", "modules"],
-  extensions: [".js", ".ts", ".jsx", ".tsx"],
   aliasReplace: {
     "@/": "apps/src/",
   },

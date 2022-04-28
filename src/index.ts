@@ -1,4 +1,5 @@
 import cac from "cac";
+import { writeDefaultConfig } from "./config/write";
 import { trace } from "./constants";
 import { run } from "./core/deps";
 
@@ -7,9 +8,12 @@ export async function main() {
 
   cli
     .command("[...params]", "Create new project from cli.")
-    .option("--print, -p", "Print the logs while collecting the dependents.")
+    .option("--init, -i", "Init a config file in root dir.")
     .action((params, options) => {
-      console.log("options:", options);
+      if (options.init) {
+        writeDefaultConfig();
+        return;
+      }
       run();
     });
 
