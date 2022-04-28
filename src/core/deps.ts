@@ -14,7 +14,7 @@ export function run(opt?: { diffFiles?: string[] }) {
   const ENTRY = config.entry;
   const PKG_JSON_LOCATION = ["package.json", ...(config.packageJsonPath || [])];
   const SELF_PACKAGES = config.includeDep || [];
-  const FINAL_DIR = config.sourceDir || [];
+  const FINAL_DIR = config.targetDir || [];
   const possibleExtensions = config.extensions || ["js", "ts", "jsx", "tsx"];
   const aliasReplace = config.aliasReplace || {};
   // priority: option > config

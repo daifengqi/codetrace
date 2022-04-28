@@ -1,6 +1,6 @@
 export type Config = {
   entry: string;
-  sourceDir: string[];
+  targetDir: string[];
   packageJsonPath?: string[];
   includeDep?: string[];
   extensions?: string[];

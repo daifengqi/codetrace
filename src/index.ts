@@ -8,9 +8,9 @@ export async function main() {
   const cli = cac(trace);
 
   cli
-    .command("[...params]", "Create new project from cli.")
-    .option("--init, -i", "Init a config file in root dir.")
-    .option("--git, -g", "Get diff files from git.")
+    .command("[...params]", "")
+    .option("-i, --init", "Create a config file in root dir.")
+    .option("-g, --git", "Use git diff files to track influenced result.")
     .action((params, options) => {
       if (options.init) {
         writeDefaultConfig();
