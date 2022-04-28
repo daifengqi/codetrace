@@ -223,6 +223,6 @@ export function run(opt?: { diffFiles?: string[] }) {
   addFinalAffected(diffFiles);
   retainOneDirLevel();
 
-  log("Code trace result: ", [...fileCollectedAffected]);
+  log("Code trace result:\n ", [...fileCollectedAffected], "\n");
   return [...fileCollectedAffected];
 }
