@@ -1,10 +1,10 @@
 export type Config = {
   entry: string;
-  targetDir: string[];
+  endDir: string[];
   packageJsonPath?: string[];
-  includeDep?: string[];
+  include?: string[];
   extensions?: string[];
-  aliasReplace?: Record<string, string>;
-  diffFiles?: string[];
-  showLogs?: boolean;
+  alias?: Record<string, string>;
+  files?: string[];
+  log?: boolean;
 };

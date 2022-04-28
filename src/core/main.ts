@@ -6,19 +6,21 @@ const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 const { log } = console;
 
-export function run(opt?: { diffFiles?: string[] }) {
+export function runMain(opt?: { diffFiles?: string[] }) {
   const config = readConfig();
 
   /** Static variables */
   const ENTRY = config.entry;
   const PKG_JSON_LOCATION = ["package.json", ...(config.packageJsonPath || [])];
-  const SELF_PACKAGES = config.includeDep || [];
-  const FINAL_DIR = config.targetDir || [];
+  const SELF_PACKAGES = config.include || [];
+  const FINAL_DIR = config.endDir || [];
   const possibleExtensions = config.extensions || ["js", "ts", "jsx", "tsx"];
-  const aliasReplace = config.aliasReplace || {};
+  const aliasReplace = config.alias || {};
   // priority: option > config
-  const diffFiles = opt?.diffFiles ? opt.diffFiles : config.diffFiles || [];
-  const showLogs = config.showLogs || false;
+  const diffFiles = opt?.diffFiles
+    ? [...opt.diffFiles, ...(config.files || [])]
+    : config.files || [];
+  const showLogs = config.log || false;
 
   /** runtime variables */
   const deps = new Map();

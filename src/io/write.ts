@@ -4,29 +4,38 @@ import { Config } from "../types";
 
 const comment = `
 
-// entry: string; /* The entry point of the App, only one entry supported for now */
+// entry: string;
+// The entry point of the App.
 
-// targetDir: string[]; /* Output final influenced files under which directory */
+// endDir: string[];
+// Final influenced files should be under which directory, these are converged point.
 
-// packageJsonPath?: string[]; /* Add sub-app's pakcage.json path if you have */
+// packageJsonPath?: string[];
+// Add sub-app's pakcage.json path if you have. It by default has "pacakge.json" in root dir.
+// We use this to exclude packages that are dependencies in packaga.json when build the dependency graph.
 
-// includeDep?: string[]; /* Local package name specified */
+// include?: string[];
+// Specify some packages included in the dependency graph. These packages will not be removed when building the graph.
 
-// extensions?: string[]; /* Traced file extension, with js/ts/tsx/jsx by default; node that you config will overwrite default */
+// extensions?: string[];
+// Traced file name extension, with ["js","ts","tsx","jsx"] by default. You will overwrite the default if you have this config.
 
-// aliasReplace?: Record<string, string>; /* Replace alias if you have when import library */
+// alias?: Record<string, string>;
+// Replace alias when import library.
 
-// diffFiles?: string[]; /* If you don't use -g/--git, you can manually include files to trace */
+// files?: string[]; 
+// We recommend to use -g/--git to get changed files. However, you can manually add some files.
 
-// showLogs?: boolean; /* Print logs when trace dependency graph if set to true */
+// log?: boolean;
+// Print logs when trace dependency graph if set to true.
 
 `;
 
 const defaultConfig: Config = {
   entry: "src/main.js",
-  targetDir: ["pages", "modules"],
-  aliasReplace: {
-    "@/": "apps/src/",
+  endDir: ["pages", "modules"],
+  alias: {
+    "@/": "src/",
   },
 };
 
