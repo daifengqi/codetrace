@@ -2,7 +2,7 @@ import cac from "cac";
 import ora from "ora";
 import { writeDefaultConfig } from "./config/write";
 import { trace } from "./constants";
-import { run } from "./core/deps";
+import { run } from "./core/main";
 import { getGitDiff } from "./core/git";
 
 const spinner = ora("Analyzing the dependency graph... \n");
