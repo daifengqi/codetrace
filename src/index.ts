@@ -1,6 +1,6 @@
 import cac from "cac";
 import ora from "ora";
-import { writeDefaultConfig } from "./config/write";
+import { writeDefaultConfig } from "./io/write";
 import { trace } from "./constants";
 import { run } from "./core/main";
 import { getGitDiff } from "./core/git";

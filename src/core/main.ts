@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { readConfig } from "../config/read";
+import { readConfig } from "../io/read";
 import { isAlias, isSelfModules, removeLastFile, replaceAlias } from "../utils";
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
