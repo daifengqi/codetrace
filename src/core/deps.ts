@@ -5,20 +5,23 @@ import { isAlias, isSelfModules, removeLastFile, replaceAlias } from "../utils";
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 
-export function run() {
+export function run(opt?: { diffFiles?: string[] }) {
   const config = readConfig();
   const { log } = console;
   log(config);
 
   /** Static variables */
   const ENTRY = config.entry;
-  const PKG_JSON_LOCATION = ["package.json", ...config.packageJsonPath];
-  const SELF_PACKAGES = config.includeDep;
-  const FINAL_DIR = config.sourceDir;
+  const PKG_JSON_LOCATION = ["package.json", ...(config.packageJsonPath || [])];
+  const SELF_PACKAGES = config.includeDep || [];
+  const FINAL_DIR = config.sourceDir || [];
   const possibleExtensions = config.extensions || ["js", "ts", "jsx", "tsx"];
-  const aliasReplace = config.aliasReplace;
-  const diffFiles = config.diffFiles;
+  const aliasReplace = config.aliasReplace || {};
+  // priority: option > config
+  const diffFiles = opt?.diffFiles ? opt.diffFiles : config.diffFiles || [];
   const showLogs = config.showLogs || false;
+
+  log({ diffFiles });
 
   /** runtime variables */
   const deps = new Map();
@@ -33,7 +36,7 @@ export function run() {
     PKG_JSON_LOCATION.forEach((path) => {
       const pkgJson = JSON.parse(fs.readFileSync(`./${path}`).toString());
 
-      Object.keys(pkgJson.dependencies).forEach((dep) => {
+      Object.keys(pkgJson.dependencies || []).forEach((dep) => {
         if (!isSelfModules(dep, SELF_PACKAGES)) {
           nodeModuleDeps.add(dep);
         }
@@ -78,7 +81,7 @@ export function run() {
     }
 
     for (const ext of possibleExtensions) {
-      const FilePathExt = filePath + ext;
+      const FilePathExt = `${filePath}.${ext}`;
       if (existValidFile(FilePathExt)) {
         possiblePaths.push(FilePathExt);
       }
@@ -86,7 +89,7 @@ export function run() {
 
     const sep = path.sep;
 
-    for (const ext of possibleExtensions.map((ext) => `${sep}index${ext}`)) {
+    for (const ext of possibleExtensions.map((ext) => `${sep}index.${ext}`)) {
       const FilePathExt = filePath + ext;
       if (existValidFile(FilePathExt)) {
         possiblePaths.push(FilePathExt);
@@ -142,7 +145,7 @@ export function run() {
     }
     visited.add(currentFilePath);
     if (showLogs) {
-      log("------ goto file:", currentFilePath);
+      log("------ build dependency graph:", currentFilePath);
     }
 
     const depFiles = [];
@@ -171,7 +174,7 @@ export function run() {
     }
   }
 
-  function addFinalAffected(diffFiles) {
+  function addFinalAffected(diffFiles: string[]) {
     for (const filePath of diffFiles) {
       if (cvisited.has(filePath)) {
         return;
@@ -186,15 +189,13 @@ export function run() {
       });
 
       const parentList = cdeps.get(filePath);
+
       if (!parentList) {
-        return;
+        // next file
+        continue;
       }
 
-      for (const file of parentList) {
-        if (file) {
-          addFinalAffected(file);
-        }
-      }
+      addFinalAffected(parentList);
     }
   }
 
@@ -224,5 +225,7 @@ export function run() {
   initAllDeps();
   addFinalAffected(diffFiles);
   retainOneDirLevel();
-  log(fileCollectedAffected);
+
+  log("Code trace result: ", [...fileCollectedAffected]);
+  return [...fileCollectedAffected];
 }
