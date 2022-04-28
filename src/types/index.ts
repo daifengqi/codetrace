@@ -4,7 +4,7 @@ export type Config = {
   packageJsonPath?: string[];
   includeDep?: string[];
   extensions?: string[];
-  aliasReplace?: Object;
+  aliasReplace?: Record<string, string>;
   diffFiles?: string[];
   showLogs?: boolean;
 };

@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { readConfig } from "../config/read";
+import { isAlias, isSelfModules, removeLastFile, replaceAlias } from "../utils";
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 
@@ -28,40 +29,12 @@ export function run() {
   const fileAffected = new Set<string>();
   const fileCollectedAffected = new Set();
 
-  /** Functions */
-  function isAlias(filePath) {
-    for (const key of Object.keys(aliasReplace)) {
-      if (filePath.startsWith(key)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  function replaceAlias(filePath) {
-    Object.keys(aliasReplace).forEach((key) => {
-      if (filePath.startsWith(key)) {
-        filePath = filePath.replace(key, aliasReplace[key]);
-      }
-    });
-    return filePath;
-  }
-
-  function isSelfModules(name) {
-    for (const mod of SELF_PACKAGES) {
-      if (name.startsWith(mod)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   function initNodeModuleDeps() {
     PKG_JSON_LOCATION.forEach((path) => {
       const pkgJson = JSON.parse(fs.readFileSync(`./${path}`).toString());
 
       Object.keys(pkgJson.dependencies).forEach((dep) => {
-        if (!isSelfModules(dep)) {
+        if (!isSelfModules(dep, SELF_PACKAGES)) {
           nodeModuleDeps.add(dep);
         }
       });
@@ -81,17 +54,13 @@ export function run() {
       return;
     }
 
-    if (isAlias(value)) {
+    if (isAlias(value, aliasReplace)) {
       /** absolute path */
-      return replaceAlias(value);
+      return replaceAlias(value, aliasReplace);
     }
 
     /** relative path */
     return path.join(removeLastFile(filePath), value);
-  }
-
-  function removeLastFile(filePath) {
-    return filePath.substring(0, filePath.lastIndexOf("/"));
   }
 
   function existValidFile(filePath) {
@@ -202,27 +171,29 @@ export function run() {
     }
   }
 
-  function addFinalAffected(filePath) {
-    if (cvisited.has(filePath)) {
-      return;
-    }
-    cvisited.add(filePath);
-
-    FINAL_DIR.forEach((dirName) => {
-      const sep = path.sep;
-      if (filePath.indexOf(`${sep}${dirName}${sep}`) !== -1) {
-        fileAffected.add(filePath);
+  function addFinalAffected(diffFiles) {
+    for (const filePath of diffFiles) {
+      if (cvisited.has(filePath)) {
+        return;
       }
-    });
+      cvisited.add(filePath);
 
-    const parentList = cdeps.get(filePath);
-    if (!parentList) {
-      return;
-    }
+      FINAL_DIR.forEach((dirName) => {
+        const sep = path.sep;
+        if (filePath.indexOf(`${sep}${dirName}${sep}`) !== -1) {
+          fileAffected.add(filePath);
+        }
+      });
 
-    for (const file of parentList) {
-      if (file) {
-        addFinalAffected(file);
+      const parentList = cdeps.get(filePath);
+      if (!parentList) {
+        return;
+      }
+
+      for (const file of parentList) {
+        if (file) {
+          addFinalAffected(file);
+        }
       }
     }
   }
@@ -251,9 +222,7 @@ export function run() {
   }
 
   initAllDeps();
-  for (const file of diffFiles) {
-    addFinalAffected(file);
-  }
+  addFinalAffected(diffFiles);
   retainOneDirLevel();
   log(fileCollectedAffected);
 }
