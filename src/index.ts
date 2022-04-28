@@ -1,8 +1,11 @@
 import cac from "cac";
+import ora from "ora";
 import { writeDefaultConfig } from "./config/write";
 import { trace } from "./constants";
 import { run } from "./core/deps";
 import { getGitDiff } from "./core/git";
+
+const spinner = ora("Analyzing the dependency graph... \n");
 
 export async function main() {
   const cli = cac(trace);
@@ -18,10 +21,16 @@ export async function main() {
       }
       if (options.git) {
         const diffFiles = getGitDiff();
+        spinner.start();
         run({ diffFiles });
+        spinner.stop();
         return;
       }
+
+      // default run with config
+      spinner.start();
       run();
+      spinner.stop();
     });
 
   cli.help();

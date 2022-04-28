@@ -4,11 +4,10 @@ import { readConfig } from "../config/read";
 import { isAlias, isSelfModules, removeLastFile, replaceAlias } from "../utils";
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
+const { log } = console;
 
 export function run(opt?: { diffFiles?: string[] }) {
   const config = readConfig();
-  const { log } = console;
-  log(config);
 
   /** Static variables */
   const ENTRY = config.entry;
@@ -20,8 +19,6 @@ export function run(opt?: { diffFiles?: string[] }) {
   // priority: option > config
   const diffFiles = opt?.diffFiles ? opt.diffFiles : config.diffFiles || [];
   const showLogs = config.showLogs || false;
-
-  log({ diffFiles });
 
   /** runtime variables */
   const deps = new Map();
