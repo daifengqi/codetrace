@@ -226,5 +226,5 @@ export function runMain(opt?: { diffFiles?: string[] }) {
   retainOneDirLevel();
 
   log("Code trace result:\n ", [...fileCollectedAffected], "\n");
-  return [...fileCollectedAffected];
+  return [...fileCollectedAffected] as string[];
 }
