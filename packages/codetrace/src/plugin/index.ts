@@ -1,7 +1,10 @@
-import { Plugins } from "../types";
+import { Plugin } from "../types";
 
-export function pluginHandler(collectedFiles: string[], plugins: Plugins) {
-  for (const fn of plugins) {
+export function pluginHandler(
+  collectedFiles: string[],
+  fns: Array<ReturnType<Plugin>>
+) {
+  for (const fn of fns) {
     fn(collectedFiles);
   }
 }

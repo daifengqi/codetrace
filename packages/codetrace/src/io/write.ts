@@ -29,8 +29,9 @@ const comment = `
 // verbose?: boolean;
 // Print logs when trace dependency graph if set to true.
 
-// plugins?: (filesInEndDir: string[]) => void
-// Plugin function will execute after get the traced files in endDirs.
+// plugins?: (options: any) => (paths: string[]) => void
+// A Plugin should return a function with files/dirs in final dirs; specify what you will do
+// after get these files.
 
 `;
 
@@ -40,11 +41,12 @@ const defaultConfig: Config = {
   alias: {
     "@/": "src/",
   },
+  plugins: [],
 };
 
 export function writeDefaultConfig() {
   fs.writeFileSync(
     traceConfigJs,
-    `${comment}module.exports = ${JSON.stringify(defaultConfig)}`
+    `${comment}\nmodule.exports = ${JSON.stringify(defaultConfig)}`
   );
 }

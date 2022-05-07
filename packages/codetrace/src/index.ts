@@ -4,7 +4,7 @@ import { writeDefaultConfig } from "./io/write";
 import { trace } from "./constants";
 import { collectFile } from "./core/main";
 import { getGitDiff } from "./core/git";
-import { Params, Plugins } from "./types";
+import { Params } from "./types";
 import { pluginHandler } from "./plugin";
 import { readConfig } from "./io/read";
 

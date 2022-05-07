@@ -14,6 +14,6 @@ export type Params = {
   diff_files?: string[];
 };
 
-export type Plugin = (fileInEndDirs: string[]) => void;
+export type Plugin = (options: any) => (files: string[]) => void;
 
 export type Plugins = Plugin[];
