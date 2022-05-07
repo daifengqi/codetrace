@@ -7,7 +7,7 @@ const comment = `
 // entry: string;
 // The entry point of the App.
 
-// endDir: string[];
+// endDirs: string[];
 // Final influenced files should be under which directory, these are converged point.
 
 // packageJsonPath?: string[];
@@ -29,11 +29,14 @@ const comment = `
 // verbose?: boolean;
 // Print logs when trace dependency graph if set to true.
 
+// plugins?: (filesInEndDir: string[]) => void
+// Plugin function will execute after get the traced files in endDirs.
+
 `;
 
 const defaultConfig: Config = {
   entry: "src/main.js",
-  endDir: ["pages", "modules"],
+  endDirs: ["pages", "modules"],
   alias: {
     "@/": "src/",
   },

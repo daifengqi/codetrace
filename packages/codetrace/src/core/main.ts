@@ -1,5 +1,5 @@
 import { readConfig } from "../io/read";
-import { Params } from "../types";
+import { Config, Params } from "../types";
 
 import {
   filterFilesByDirLevel,
@@ -13,8 +13,8 @@ import {
 
 const { log } = console;
 
-export function collectFile(params?: Params) {
-  const config = readConfig();
+export function collectFile(props: { config: Config; params?: Params }) {
+  const { config, params } = props;
 
   const {
     entry,

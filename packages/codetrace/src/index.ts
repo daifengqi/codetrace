@@ -4,16 +4,25 @@ import { writeDefaultConfig } from "./io/write";
 import { trace } from "./constants";
 import { collectFile } from "./core/main";
 import { getGitDiff } from "./core/git";
-import { Params } from "./types";
+import { Params, Plugins } from "./types";
+import { pluginHandler } from "./plugin";
+import { readConfig } from "./io/read";
 
 const spinner = ora("Analyzing the dependency graph... \n");
 
 function run(params: Params) {
   spinner.start();
 
-  return Promise.resolve(collectFile(params)).finally(() => {
-    spinner.stop();
-  });
+  const config = readConfig();
+  const { plugins } = config;
+
+  return Promise.resolve(collectFile({ config, params }))
+    .then((cFiles) => {
+      pluginHandler(cFiles, plugins);
+    })
+    .finally(() => {
+      spinner.stop();
+    });
 }
 
 export async function main() {
