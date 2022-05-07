@@ -2,15 +2,16 @@ import cac from "cac";
 import ora from "ora";
 import { writeDefaultConfig } from "./io/write";
 import { trace } from "./constants";
-import { runMain } from "./core/main";
+import { collectFile } from "./core/main";
 import { getGitDiff } from "./core/git";
+import { Params } from "./types";
 
 const spinner = ora("Analyzing the dependency graph... \n");
 
-function run(...args) {
+function run(params: Params) {
   spinner.start();
 
-  return Promise.resolve(runMain(...args)).finally(() => {
+  return Promise.resolve(collectFile(params)).finally(() => {
     spinner.stop();
   });
 }
@@ -29,12 +30,12 @@ export async function main() {
       }
       if (options.git) {
         const diffFiles = getGitDiff();
-        await run({ diffFiles });
+        run({ diff_files: diffFiles });
         return;
       }
 
       // default run with config
-      await run();
+      run({});
     });
 
   cli.help();

@@ -6,5 +6,9 @@ export type Config = {
   extensions?: string[];
   alias?: Record<string, string>;
   files?: string[];
-  log?: boolean;
+  verbose?: boolean;
+};
+
+export type Params = {
+  diff_files?: string[];
 };

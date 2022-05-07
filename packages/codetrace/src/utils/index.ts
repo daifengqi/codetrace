@@ -22,15 +22,6 @@ export function replaceAlias(
   return filePath;
 }
 
-export function isSelfModules(name: string, includePkgs: string[]) {
-  for (const mod of includePkgs) {
-    if (name.startsWith(mod)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 export function removeLastFile(filePath: string) {
   return filePath.substring(0, filePath.lastIndexOf("/"));
 }

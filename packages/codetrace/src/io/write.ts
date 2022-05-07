@@ -26,7 +26,7 @@ const comment = `
 // files?: string[]; 
 // We recommend to use -g/--git to get changed files. However, you can manually add some files.
 
-// log?: boolean;
+// verbose?: boolean;
 // Print logs when trace dependency graph if set to true.
 
 `;
