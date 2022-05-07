@@ -44,14 +44,15 @@ export function collectFile(params?: Params) {
     visited,
     verbose,
   });
-  // clear memory
-  visited.clear();
+
   // convert deps
+  visited.clear();
   recurAddCDeps({
     deps,
     cdeps,
   });
   // collect
+  visited.clear();
   recurCollectAffected({
     diffFileList: files,
     visited,
