@@ -11,7 +11,7 @@ export function initConfig(props: { config: Config; params?: Params }) {
     entry,
     packageJsonPath = [],
     include = [],
-    endDir = [],
+    endDirs = [],
     extensions = ["js", "ts", "jsx", "tsx"],
     alias = {},
     verbose = false,
@@ -26,7 +26,7 @@ export function initConfig(props: { config: Config; params?: Params }) {
     entry,
     packageJsonPath,
     include,
-    endDir,
+    endDirs,
     extensions,
     alias,
     verbose,
@@ -302,11 +302,11 @@ export function recurAddCDeps(props: {
 export function recurCollectAffected(props: {
   diffFileList: string[];
   visited: Set<string>;
-  endDir: string[];
+  endDirs: string[];
   fileAffected: Set<string>;
   cdeps: Map<string, string[]>;
 }) {
-  const { diffFileList, visited, endDir, fileAffected, cdeps } = props;
+  const { diffFileList, visited, endDirs, fileAffected, cdeps } = props;
 
   for (const filePath of diffFileList) {
     if (visited.has(filePath)) {
@@ -314,7 +314,7 @@ export function recurCollectAffected(props: {
     }
     visited.add(filePath);
 
-    endDir.forEach((dirName) => {
+    endDirs.forEach((dirName) => {
       const sep = path.sep;
       if (filePath.indexOf(`${sep}${dirName}${sep}`) !== -1) {
         fileAffected.add(filePath);
@@ -331,7 +331,7 @@ export function recurCollectAffected(props: {
     recurCollectAffected({
       diffFileList: parentList,
       visited,
-      endDir,
+      endDirs,
       fileAffected,
       cdeps,
     });
@@ -340,14 +340,14 @@ export function recurCollectAffected(props: {
 
 export function filterFilesByDirLevel(props: {
   fileAffected: string[];
-  endDir: string[];
+  endDirs: string[];
   level?: number;
 }) {
-  const { endDir, fileAffected, level = 1 } = props;
+  const { endDirs, fileAffected, level = 1 } = props;
 
   const fileCollectedAffected = new Set<string>();
 
-  for (const dirName of endDir) {
+  for (const dirName of endDirs) {
     for (const filePath of fileAffected) {
       const filePathArr = filePath.split(path.sep);
       const startIdx = filePathArr.indexOf(dirName);

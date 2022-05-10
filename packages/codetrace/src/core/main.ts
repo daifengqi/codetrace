@@ -20,7 +20,7 @@ export function collectFile(props: { config: Config; params?: Params }) {
     entry,
     packageJsonPath,
     include: includePackages,
-    endDir,
+    endDirs,
     extensions,
     alias,
     verbose,
@@ -56,13 +56,13 @@ export function collectFile(props: { config: Config; params?: Params }) {
   recurCollectAffected({
     diffFileList: files,
     visited,
-    endDir,
+    endDirs,
     fileAffected,
     cdeps,
   });
 
   const fileCollectedAffected = filterFilesByDirLevel({
-    endDir,
+    endDirs,
     fileAffected: [...fileAffected],
   });
 
