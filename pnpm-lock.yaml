@@ -19,6 +19,12 @@ importers:
       '@types/node': 17.0.31
       typescript: 4.6.4
 
+  packages/trace-plugin-markdown:
+    specifiers:
+      typescript: ^4.6.4
+    devDependencies:
+      typescript: 4.6.4
+
 packages:
 
   /@babel/code-frame/7.16.7:

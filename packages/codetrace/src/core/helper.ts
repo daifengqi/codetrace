@@ -1,7 +1,12 @@
 import * as fs from "fs";
 import path from "path";
 import { Config, Params } from "../types";
-import { isAlias, removeLastFile, replaceAlias } from "../utils";
+import {
+  existValidFile,
+  isAlias,
+  removeLastFile,
+  replaceAlias,
+} from "../utils";
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 
@@ -113,18 +118,6 @@ export function processImportModule(props: {
 
   /** relative path */
   return path.join(removeLastFile(filePath), astValue);
-}
-
-export function existValidFile(props: {
-  filePath: string;
-  extensions: string[];
-}) {
-  const { filePath, extensions } = props;
-  return (
-    fs.existsSync(filePath) &&
-    fs.statSync(filePath).isFile() &&
-    extensions.some((ext) => filePath.endsWith(ext))
-  );
 }
 
 export function getPossiblePaths(props: {

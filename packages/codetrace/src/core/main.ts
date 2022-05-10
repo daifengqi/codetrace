@@ -1,4 +1,3 @@
-import { readConfig } from "../io/read";
 import { Config, Params } from "../types";
 
 import {
@@ -66,6 +65,9 @@ export function collectFile(props: { config: Config; params?: Params }) {
     fileAffected: [...fileAffected],
   });
 
-  log("Code trace result:\n ", [...fileCollectedAffected], "\n");
+  if (verbose) {
+    log("Code trace result:\n ", [...fileCollectedAffected], "\n");
+  }
+
   return [...fileCollectedAffected];
 }
