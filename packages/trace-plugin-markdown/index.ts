@@ -9,15 +9,18 @@ export function markdown(options?: { name?: string }) {
   return (files: string[]) => {
     const mdPaths = files.map((path) => `${path}/${name}.md`);
 
-    const mdContent = mdPaths
+    const mdObject = mdPaths
       .filter((path) => fs.existsSync(path) && fs.statSync(path).isFile())
       .map((path) => {
         const content = fs.readFileSync(path, "utf-8");
-        return content;
+        return {
+          path,
+          content,
+        };
       });
 
-    console.log("--- mdContent");
-    console.log(mdContent);
+    console.log("--- mdObject");
+    console.log(mdObject);
     console.log("--- ");
   };
 }
