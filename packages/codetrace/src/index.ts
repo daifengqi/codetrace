@@ -32,7 +32,7 @@ export async function main() {
     .command("[...params]", "")
     .option("-i, --init", "Create a config file in root dir.")
     .option("-g, --git", "Use git diff files to track influenced result.")
-    .action(async (params, options) => {
+    .action((params, options) => {
       if (options.init) {
         writeDefaultConfig();
         return;
