@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { main } from "./index";
-import { error_log } from "./utils/clit";
+import { index } from "./index";
+import { error_log } from "./utils/cli";
 
-main().catch((e) => {
+index().catch((e) => {
   error_log("[main]", e);
 });

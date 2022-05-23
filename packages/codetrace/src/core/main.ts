@@ -1,5 +1,6 @@
+import { writeDeps } from "../io/write-deps";
 import { Config, Handlers, Params } from "../types";
-import { success_log } from "../utils/clit";
+import { success_log } from "../utils/cli";
 
 import {
   filterFilesByDirLevel,
@@ -11,10 +12,10 @@ import {
   recurCollectFiles,
 } from "./helper";
 
-export function collectFile(props: {
+export function main(props: {
   config: Config;
   params?: Params;
-  handlers: Handlers[];
+  handlers?: Handlers[];
 }) {
   const { config, params, handlers } = props;
 
@@ -49,6 +50,12 @@ export function collectFile(props: {
   // convert deps
   visited.clear();
   recurInvertDeps({
+    deps,
+    cdeps,
+  });
+
+  // store deps and cdeps
+  writeDeps({
     deps,
     cdeps,
   });

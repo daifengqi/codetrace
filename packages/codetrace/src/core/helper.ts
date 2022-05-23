@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import path from "path";
 import { Config, Params } from "../types";
+import { DepType } from "../types/dep";
 import {
   existValidFile,
   isAlias,
@@ -41,8 +42,8 @@ export function initConfig(props: { config: Config; params?: Params }) {
 
 export function initVariables() {
   return {
-    deps: new Map<string, string[]>(),
-    cdeps: new Map<string, string[]>(), // converted Deps
+    deps: new Map<string, string[]>() as DepType,
+    cdeps: new Map<string, string[]>() as DepType, // converted Deps
     visited: new Set<string>(),
     targetFilesSet: new Set<string>(),
   };
@@ -224,7 +225,7 @@ export function recurTraceDeps(props: {
   nodeModuleDeps: Set<string>;
   alias: Record<string, string>;
   extensions: string[];
-  deps: Map<string, string[]>;
+  deps: DepType;
   visited: Set<string>;
 }) {
   const { currentFilePath, nodeModuleDeps, alias, extensions, deps, visited } =
@@ -262,10 +263,7 @@ export function recurTraceDeps(props: {
   }
 }
 
-export function recurInvertDeps(props: {
-  deps: Map<string, string[]>;
-  cdeps: Map<string, string[]>;
-}) {
+export function recurInvertDeps(props: { deps: DepType; cdeps: DepType }) {
   const { deps, cdeps } = props;
   for (const [file, depFiles] of deps.entries()) {
     for (const depFile of depFiles) {
@@ -283,7 +281,7 @@ export function recurCollectFiles(props: {
   visited: Set<string>;
   endDirs: string[];
   targetFilesSet: Set<string>;
-  cdeps: Map<string, string[]>;
+  cdeps: DepType;
 }) {
   const { diffFileList, visited, endDirs, targetFilesSet, cdeps } = props;
 
