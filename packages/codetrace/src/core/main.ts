@@ -14,9 +14,9 @@ import {
 export function collectFile(props: {
   config: Config;
   params?: Params;
-  handler: Handlers[];
+  handlers: Handlers[];
 }) {
-  const { config, params, handler } = props;
+  const { config, params, handlers } = props;
 
   const {
     entry,
@@ -71,7 +71,7 @@ export function collectFile(props: {
     success_log("Code trace result:\n ", [...targetDirs], "\n");
   }
 
-  handler.forEach((h) => {
+  handlers.forEach((h) => {
     h?.targetDirHandler([...targetDirs]);
   });
 

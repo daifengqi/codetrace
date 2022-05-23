@@ -13,9 +13,10 @@ function run(params: Params) {
   spinner.start();
 
   const config = readConfig();
-  const { plugins: handler } = config;
+  // handler is th
+  const { plugins: handlers } = config;
 
-  return Promise.resolve(collectFile({ config, params, handler })).finally(
+  return Promise.resolve(collectFile({ config, params, handlers })).finally(
     () => {
       spinner.stop();
     }
