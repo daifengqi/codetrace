@@ -1,11 +1,24 @@
 import * as fs from "fs";
+import { cdepsJson, depsJson } from "../constants";
 import { DepType } from "../types/dep";
+import { removeLastFile } from "../utils";
 
-const position = "node_modules/.codetrace";
+function writeFile(file: string, content: string) {
+  const dir = removeLastFile(file);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+
+  fs.writeFileSync(file, content);
+}
+
+function map2JSON(m: Map<any, any>) {
+  return JSON.stringify(Object.fromEntries(m));
+}
 
 export function writeDeps(props: { deps: DepType; cdeps: DepType }) {
   const { deps, cdeps } = props;
 
-  fs.writeFileSync(`${position}/deps.json`, JSON.stringify(deps));
-  fs.writeFileSync(`${position}/cdeps.json`, JSON.stringify(cdeps));
+  writeFile(depsJson, map2JSON(deps));
+  writeFile(cdepsJson, map2JSON(cdeps));
 }

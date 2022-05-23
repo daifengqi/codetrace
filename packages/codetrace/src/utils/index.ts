@@ -39,3 +39,7 @@ export function existValidFile(props: {
     extensions.some((ext) => filePath.endsWith(ext))
   );
 }
+
+export function existFile(path: string) {
+  return fs.existsSync(path) && fs.statSync(path).isFile();
+}

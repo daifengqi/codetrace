@@ -9,7 +9,7 @@ import { readConfig } from "./io/read-config";
 
 const spinner = ora("Analyzing the dependency graph... \n");
 
-function run(params: Params) {
+export function run(params: Params) {
   spinner.start();
 
   const config = readConfig();
@@ -28,6 +28,7 @@ export async function index() {
     .command("[...params]", "")
     .option("-i, --init", "Create a config file in root dir.")
     .option("-g, --git", "Use git diff files to track influenced result.")
+    .option("-s, --show", "Show the trace result of a single file")
     .action((params, options) => {
       if (options.init) {
         writeDefaultConfig();
@@ -36,6 +37,13 @@ export async function index() {
       if (options.git) {
         const diffFiles = getGitDiff();
         run({ diff_files: diffFiles });
+        return;
+      }
+      if (options.show) {
+        console.log("options", options);
+        console.log("params", params);
+        const files = params;
+
         return;
       }
 
