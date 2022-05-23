@@ -1,3 +1,11 @@
+type TargetDirsHandlerPlugin = (dirs: string[]) => void;
+
+export type PluginHandler = TargetDirsHandlerPlugin;
+
+export type Handlers = {
+  targetDirHandler?: TargetDirsHandlerPlugin;
+};
+
 export type Config = {
   entry: string;
   endDirs: string[];
@@ -7,13 +15,9 @@ export type Config = {
   alias?: Record<string, string>;
   files?: string[];
   verbose?: boolean;
-  plugins?: Plugins;
+  plugins?: Handlers[];
 };
 
 export type Params = {
   diff_files?: string[];
 };
-
-export type Plugin = (options: any) => (files: string[]) => void;
-
-export type Plugins = Plugin[];

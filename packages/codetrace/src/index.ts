@@ -5,7 +5,6 @@ import { trace } from "./constants";
 import { collectFile } from "./core/main";
 import { getGitDiff } from "./core/git";
 import { Params } from "./types";
-import { pluginHandler } from "./plugin";
 import { readConfig } from "./io/read";
 
 const spinner = ora("Analyzing the dependency graph... \n");
@@ -14,15 +13,13 @@ function run(params: Params) {
   spinner.start();
 
   const config = readConfig();
-  const { plugins } = config;
+  const { plugins: handler } = config;
 
-  return Promise.resolve(collectFile({ config, params }))
-    .then((cFiles) => {
-      pluginHandler(cFiles, plugins);
-    })
-    .finally(() => {
+  return Promise.resolve(collectFile({ config, params, handler })).finally(
+    () => {
       spinner.stop();
-    });
+    }
+  );
 }
 
 export async function main() {

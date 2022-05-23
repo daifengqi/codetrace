@@ -1,19 +1,22 @@
-import { Config, Params } from "../types";
+import { Config, Handlers, Params } from "../types";
+import { success_log } from "../utils/clit";
 
 import {
   filterFilesByDirLevel,
   initConfig,
   initNodeModuleDeps,
   initVariables,
-  recurAddCDeps,
-  recurAddDeps,
-  recurCollectAffected,
+  recurInvertDeps,
+  recurTraceDeps,
+  recurCollectFiles,
 } from "./helper";
 
-const { log } = console;
-
-export function collectFile(props: { config: Config; params?: Params }) {
-  const { config, params } = props;
+export function collectFile(props: {
+  config: Config;
+  params?: Params;
+  handler: Handlers[];
+}) {
+  const { config, params, handler } = props;
 
   const {
     entry,
@@ -33,26 +36,25 @@ export function collectFile(props: { config: Config; params?: Params }) {
     includePackages,
   });
 
-  // add deps
-  recurAddDeps({
+  // trace deps
+  recurTraceDeps({
     currentFilePath: entry,
     nodeModuleDeps,
     alias,
     extensions,
     deps,
     visited,
-    verbose,
   });
 
   // convert deps
   visited.clear();
-  recurAddCDeps({
+  recurInvertDeps({
     deps,
     cdeps,
   });
   // collect
   visited.clear();
-  recurCollectAffected({
+  recurCollectFiles({
     diffFileList: files,
     visited,
     endDirs,
@@ -60,14 +62,18 @@ export function collectFile(props: { config: Config; params?: Params }) {
     cdeps,
   });
 
-  const fileCollectedAffected = filterFilesByDirLevel({
+  const targetDirs = filterFilesByDirLevel({
     endDirs,
     fileAffected: [...fileAffected],
   });
 
   if (verbose) {
-    log("Code trace result:\n ", [...fileCollectedAffected], "\n");
+    success_log("Code trace result:\n ", [...targetDirs], "\n");
   }
 
-  return [...fileCollectedAffected];
+  handler.forEach((h) => {
+    h?.targetDirHandler([...targetDirs]);
+  });
+
+  return [...targetDirs];
 }

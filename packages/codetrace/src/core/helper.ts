@@ -220,32 +220,20 @@ export function findDeps(props: {
   return importList.filter(Boolean);
 }
 
-export function recurAddDeps(props: {
+export function recurTraceDeps(props: {
   currentFilePath: string;
   nodeModuleDeps: Set<string>;
   alias: Record<string, string>;
   extensions: string[];
   deps: Map<string, string[]>;
   visited: Set<string>;
-  verbose: boolean;
 }) {
-  const {
-    currentFilePath,
-    nodeModuleDeps,
-    alias,
-    extensions,
-    deps,
-    visited,
-    verbose,
-  } = props;
+  const { currentFilePath, nodeModuleDeps, alias, extensions, deps, visited } =
+    props;
   if (visited.has(currentFilePath)) {
     return;
   }
   visited.add(currentFilePath);
-
-  if (verbose) {
-    console.log("------ build dependency graph:", currentFilePath);
-  }
 
   const depFiles = [];
   for (const literal of findDeps({
@@ -264,19 +252,18 @@ export function recurAddDeps(props: {
   deps.set(currentFilePath, depFiles);
 
   for (const depFile of depFiles) {
-    recurAddDeps({
+    recurTraceDeps({
       currentFilePath: depFile,
       nodeModuleDeps,
       alias,
       extensions,
       deps,
       visited,
-      verbose,
     });
   }
 }
 
-export function recurAddCDeps(props: {
+export function recurInvertDeps(props: {
   deps: Map<string, string[]>;
   cdeps: Map<string, string[]>;
 }) {
@@ -292,7 +279,7 @@ export function recurAddCDeps(props: {
   }
 }
 
-export function recurCollectAffected(props: {
+export function recurCollectFiles(props: {
   diffFileList: string[];
   visited: Set<string>;
   endDirs: string[];
@@ -321,7 +308,7 @@ export function recurCollectAffected(props: {
       continue;
     }
 
-    recurCollectAffected({
+    recurCollectFiles({
       diffFileList: parentList,
       visited,
       endDirs,
