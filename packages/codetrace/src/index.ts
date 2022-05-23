@@ -13,7 +13,7 @@ function run(params: Params) {
   spinner.start();
 
   const config = readConfig();
-  // handler is th
+  // handlers is the executed result of plugins
   const { plugins: handlers } = config;
 
   return Promise.resolve(collectFile({ config, params, handlers })).finally(

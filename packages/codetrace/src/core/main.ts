@@ -29,7 +29,7 @@ export function collectFile(props: {
     files,
   } = initConfig({ config, params });
 
-  const { deps, cdeps, visited, fileAffected } = initVariables();
+  const { deps, cdeps, visited, targetFilesSet } = initVariables();
 
   const nodeModuleDeps = initNodeModuleDeps({
     packageJsonPath,
@@ -52,27 +52,30 @@ export function collectFile(props: {
     deps,
     cdeps,
   });
+
   // collect
   visited.clear();
   recurCollectFiles({
     diffFileList: files,
     visited,
     endDirs,
-    fileAffected,
+    targetFilesSet,
     cdeps,
   });
 
-  const targetDirs = filterFilesByDirLevel({
+  const targetDirsSet = filterFilesByDirLevel({
     endDirs,
-    fileAffected: [...fileAffected],
+    targetFiles: [...targetFilesSet],
   });
 
+  const targetDirs = [...targetDirsSet];
+
   if (verbose) {
-    success_log("Code trace result:\n ", [...targetDirs], "\n");
+    success_log("Code trace result:\n ", targetDirs, "\n");
   }
 
   handlers.forEach((h) => {
-    h?.targetDirHandler([...targetDirs]);
+    h?.targetDirHandler(targetDirs);
   });
 
   return [...targetDirs];

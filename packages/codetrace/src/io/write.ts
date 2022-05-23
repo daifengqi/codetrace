@@ -29,8 +29,8 @@ const comment = `
 // verbose?: boolean;
 // Print logs when trace dependency graph if set to true.
 
-// plugins?: (options: any) => (paths: string[]) => void
-// A Plugin should return a function with files/dirs in final dirs; specify what you will do
+// plugins?: (options: any) => { targetDirHandler: (dirs: string[]) => void }
+// A Plugin should return a function-in-object with files/dirs in final dirs; specify what you will do
 // after get these files.
 
 `;

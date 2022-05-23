@@ -8,8 +8,8 @@ function markdown(options) {
     }
     var name = options.name;
     return {
-        targetDirHandler: function (files) {
-            var mdPaths = files.map(function (path) { return "".concat(path, "/").concat(name, ".md"); });
+        targetDirHandler: function (dirs) {
+            var mdPaths = dirs.map(function (path) { return "".concat(path, "/").concat(name, ".md"); });
             var mdPathContent = mdPaths
                 .filter(function (path) { return fs.existsSync(path) && fs.statSync(path).isFile(); })
                 .map(function (path) {

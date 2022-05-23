@@ -7,8 +7,8 @@ export function markdown(options?: { name?: string }) {
   const { name } = options;
 
   return {
-    targetDirHandler(files: string[]) {
-      const mdPaths = files.map((path) => `${path}/${name}.md`);
+    targetDirHandler(dirs: string[]) {
+      const mdPaths = dirs.map((path) => `${path}/${name}.md`);
 
       const mdPathContent = mdPaths
         .filter((path) => fs.existsSync(path) && fs.statSync(path).isFile())

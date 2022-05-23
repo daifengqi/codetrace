@@ -44,8 +44,7 @@ export function initVariables() {
     deps: new Map<string, string[]>(),
     cdeps: new Map<string, string[]>(), // converted Deps
     visited: new Set<string>(),
-    fileAffected: new Set<string>(),
-    fileCollectedAffected: new Set<string>(),
+    targetFilesSet: new Set<string>(),
   };
 }
 
@@ -283,10 +282,10 @@ export function recurCollectFiles(props: {
   diffFileList: string[];
   visited: Set<string>;
   endDirs: string[];
-  fileAffected: Set<string>;
+  targetFilesSet: Set<string>;
   cdeps: Map<string, string[]>;
 }) {
-  const { diffFileList, visited, endDirs, fileAffected, cdeps } = props;
+  const { diffFileList, visited, endDirs, targetFilesSet, cdeps } = props;
 
   for (const filePath of diffFileList) {
     if (visited.has(filePath)) {
@@ -297,7 +296,7 @@ export function recurCollectFiles(props: {
     endDirs.forEach((dirName) => {
       const sep = path.sep;
       if (filePath.indexOf(`${sep}${dirName}${sep}`) !== -1) {
-        fileAffected.add(filePath);
+        targetFilesSet.add(filePath);
       }
     });
 
@@ -312,23 +311,23 @@ export function recurCollectFiles(props: {
       diffFileList: parentList,
       visited,
       endDirs,
-      fileAffected,
+      targetFilesSet,
       cdeps,
     });
   }
 }
 
 export function filterFilesByDirLevel(props: {
-  fileAffected: string[];
+  targetFiles: string[];
   endDirs: string[];
   level?: number;
 }) {
-  const { endDirs, fileAffected, level = 1 } = props;
+  const { endDirs, targetFiles, level = 1 } = props;
 
   const fileCollectedAffected = new Set<string>();
 
   for (const dirName of endDirs) {
-    for (const filePath of fileAffected) {
+    for (const filePath of targetFiles) {
       const filePathArr = filePath.split(path.sep);
       const startIdx = filePathArr.indexOf(dirName);
       if (startIdx == -1) {
