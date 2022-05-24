@@ -8,6 +8,7 @@ import {
   removeLastFile,
   replaceAlias,
 } from "../utils";
+import { parsePkgJson } from "../utils/json";
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 
@@ -65,15 +66,9 @@ export function initNodeModuleDeps(props: {
   const nodeModuleDeps = new Set<string>();
   const { packageJsonPath, includePackages } = props;
   packageJsonPath.forEach((path) => {
-    const pkgJson = JSON.parse(fs.readFileSync(`./${path}`).toString());
+    const pkgJson = parsePkgJson(fs.readFileSync(`./${path}`).toString());
 
     Object.keys(pkgJson.dependencies || []).forEach((dep) => {
-      if (!isSelfModules(dep, includePackages)) {
-        nodeModuleDeps.add(dep);
-      }
-    });
-
-    Object.keys(pkgJson.devDependencies || []).forEach((dep) => {
       if (!isSelfModules(dep, includePackages)) {
         nodeModuleDeps.add(dep);
       }
@@ -91,14 +86,46 @@ export function isNodeModuleDeps(props: {
   return [...nodeModuleDeps].some((name) => filePath.startsWith(name));
 }
 
+function isNpm(library: string, npmPackages: string[]) {
+  return npmPackages.includes(library);
+}
+
+function joinLibrarySpace(
+  library: string,
+  filePath: string,
+  spaceMap?: Record<string, string>
+) {
+  if (!spaceMap) {
+    return library;
+  }
+
+  let pathname: string | undefined;
+
+  Object.keys(spaceMap).forEach((spacename) => {
+    if (filePath.startsWith(spacename)) {
+      pathname = spaceMap[spacename];
+    }
+  });
+
+  return pathname;
+}
+
+// TODO: handle workspace library
 export function processImportModule(props: {
   filePath: string;
   astValue: string;
   alias: Record<string, string>;
+  npmPackages?: string[];
+  spaceMap?: Record<string, string>;
 }) {
-  const { filePath, astValue, alias } = props;
+  const { filePath, astValue, alias, npmPackages, spaceMap } = props;
   if (!astValue) {
     return;
+  }
+
+  /** third party dependencies */
+  if (isNpm(astValue, npmPackages)) {
+    return joinLibrarySpace(astValue, filePath);
   }
 
   if (isAlias(astValue, alias)) {

@@ -43,3 +43,7 @@ export function existValidFile(props: {
 export function existFile(path: string) {
   return fs.existsSync(path) && fs.statSync(path).isFile();
 }
+
+export function existFolder(path: string) {
+  return fs.existsSync(path) && fs.statSync(path).isDirectory();
+}
