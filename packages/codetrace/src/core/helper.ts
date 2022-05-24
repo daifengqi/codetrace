@@ -94,20 +94,10 @@ export function isNodeModuleDeps(props: {
 export function processImportModule(props: {
   filePath: string;
   astValue: string;
-  nodeModuleDeps: Set<string>;
   alias: Record<string, string>;
 }) {
-  const { filePath, astValue, nodeModuleDeps, alias } = props;
+  const { filePath, astValue, alias } = props;
   if (!astValue) {
-    return;
-  }
-
-  if (
-    isNodeModuleDeps({
-      filePath,
-      nodeModuleDeps,
-    })
-  ) {
     return;
   }
 
@@ -151,10 +141,9 @@ export function getPossiblePaths(props: {
 
 export function findDeps(props: {
   filePath: string;
-  nodeModuleDeps: Set<string>;
   alias: Record<string, string>;
 }) {
-  const { filePath, nodeModuleDeps, alias } = props;
+  const { filePath, alias } = props;
   const currentFilePath = path.join("", filePath);
 
   const importList: string[] = [];
@@ -171,7 +160,6 @@ export function findDeps(props: {
         processImportModule({
           filePath,
           astValue: node.source.value,
-          nodeModuleDeps,
           alias,
         })
       );
@@ -184,7 +172,6 @@ export function findDeps(props: {
         processImportModule({
           filePath,
           astValue: node.source.value,
-          nodeModuleDeps,
           alias,
         })
       );
@@ -197,7 +184,6 @@ export function findDeps(props: {
         processImportModule({
           filePath,
           astValue: node.source.value,
-          nodeModuleDeps,
           alias,
         })
       );
@@ -210,7 +196,6 @@ export function findDeps(props: {
         processImportModule({
           filePath,
           astValue: node.arguments[0].value,
-          nodeModuleDeps,
           alias,
         })
       );
@@ -222,14 +207,12 @@ export function findDeps(props: {
 
 export function recurTraceDeps(props: {
   currentFilePath: string;
-  nodeModuleDeps: Set<string>;
   alias: Record<string, string>;
   extensions: string[];
   deps: DepType;
   visited: Set<string>;
 }) {
-  const { currentFilePath, nodeModuleDeps, alias, extensions, deps, visited } =
-    props;
+  const { currentFilePath, alias, extensions, deps, visited } = props;
   if (visited.has(currentFilePath)) {
     return;
   }
@@ -238,7 +221,6 @@ export function recurTraceDeps(props: {
   const depFiles = [];
   for (const literal of findDeps({
     filePath: currentFilePath,
-    nodeModuleDeps,
     alias,
   })) {
     for (const depPath of getPossiblePaths({
@@ -254,7 +236,6 @@ export function recurTraceDeps(props: {
   for (const depFile of depFiles) {
     recurTraceDeps({
       currentFilePath: depFile,
-      nodeModuleDeps,
       alias,
       extensions,
       deps,

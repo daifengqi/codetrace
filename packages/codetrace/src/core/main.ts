@@ -32,15 +32,14 @@ export function main(props: {
 
   const { deps, cdeps, visited, targetFilesSet } = initVariables();
 
-  const nodeModuleDeps = initNodeModuleDeps({
-    packageJsonPath,
-    includePackages,
-  });
+  // const nodeModuleDeps = initNodeModuleDeps({
+  //   packageJsonPath,
+  //   includePackages,
+  // });
 
   // trace deps
   recurTraceDeps({
     currentFilePath: entry,
-    nodeModuleDeps,
     alias,
     extensions,
     deps,
