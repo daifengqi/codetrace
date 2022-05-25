@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import path from "path";
 
 export function isAlias(
   filePath: string,

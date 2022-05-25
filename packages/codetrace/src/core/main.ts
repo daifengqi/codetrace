@@ -1,5 +1,7 @@
+import { resolveWorkSpace } from "../io/read-workspace";
 import { writeDeps } from "../io/write-deps";
 import { Config, Handlers, Params } from "../types";
+import { RepoInfo } from "../types/file";
 import { success_log } from "../utils/cli";
 
 import {
@@ -37,6 +39,8 @@ export function main(props: {
   //   includePackages,
   // });
 
+  const repoInfos: RepoInfo[] = resolveWorkSpace();
+
   // trace deps
   recurTraceDeps({
     currentFilePath: entry,
@@ -44,6 +48,7 @@ export function main(props: {
     extensions,
     deps,
     visited,
+    repoInfos,
   });
 
   // convert deps

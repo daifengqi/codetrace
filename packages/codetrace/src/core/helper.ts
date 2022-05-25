@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import path from "path";
 import { Config, Params } from "../types";
-import { DepType } from "../types/dep";
+import { DepType, RepoInfo, SpaceMap } from "../types/file";
 import {
   existValidFile,
   isAlias,
@@ -86,51 +86,45 @@ export function isNodeModuleDeps(props: {
   return [...nodeModuleDeps].some((name) => filePath.startsWith(name));
 }
 
-function isNpm(library: string, npmPackages: string[]) {
+function isNpm(props: { library: string; npmPackages: string[] }) {
+  const { library, npmPackages } = props;
   return npmPackages.includes(library);
 }
 
-function joinLibrarySpace(
-  library: string,
-  filePath: string,
-  spaceMap?: Record<string, string>
-) {
-  if (!spaceMap) {
-    return library;
-  }
-
-  let pathname: string | undefined;
-
-  Object.keys(spaceMap).forEach((spacename) => {
-    if (filePath.startsWith(spacename)) {
-      pathname = spaceMap[spacename];
-    }
-  });
-
-  return pathname;
+function getReposNpm(repoPath: string, name: string) {
+  return `${repoPath}:${name}`;
 }
 
-// TODO: handle workspace library
+function isReposNpm(name: string) {
+  return name.includes(":");
+}
+
 export function processImportModule(props: {
   filePath: string;
   astValue: string;
   alias: Record<string, string>;
-  npmPackages?: string[];
-  spaceMap?: Record<string, string>;
+  npmPackages: string[];
+  repoPath: string;
 }) {
-  const { filePath, astValue, alias, npmPackages, spaceMap } = props;
+  const { filePath, astValue, alias, npmPackages, repoPath } = props;
+
   if (!astValue) {
     return;
-  }
-
-  /** third party dependencies */
-  if (isNpm(astValue, npmPackages)) {
-    return joinLibrarySpace(astValue, filePath);
   }
 
   if (isAlias(astValue, alias)) {
     /** absolute path */
     return replaceAlias(astValue, alias);
+  }
+
+  /** third party dependencies */
+  if (
+    isNpm({
+      library: astValue,
+      npmPackages,
+    })
+  ) {
+    return getReposNpm(repoPath, astValue);
   }
 
   /** relative path */
@@ -169,8 +163,9 @@ export function getPossiblePaths(props: {
 export function findDeps(props: {
   filePath: string;
   alias: Record<string, string>;
+  repoInfo?: RepoInfo;
 }) {
-  const { filePath, alias } = props;
+  const { filePath, alias, repoInfo } = props;
   const currentFilePath = path.join("", filePath);
 
   const importList: string[] = [];
@@ -188,6 +183,8 @@ export function findDeps(props: {
           filePath,
           astValue: node.source.value,
           alias,
+          npmPackages: repoInfo.dependencies.npmPackages,
+          repoPath: repoInfo.path,
         })
       );
     },
@@ -200,6 +197,8 @@ export function findDeps(props: {
           filePath,
           astValue: node.source.value,
           alias,
+          npmPackages: repoInfo.dependencies.npmPackages,
+          repoPath: repoInfo.path,
         })
       );
     },
@@ -212,6 +211,8 @@ export function findDeps(props: {
           filePath,
           astValue: node.source.value,
           alias,
+          npmPackages: repoInfo.dependencies.npmPackages,
+          repoPath: repoInfo.path,
         })
       );
     },
@@ -224,6 +225,8 @@ export function findDeps(props: {
           filePath,
           astValue: node.arguments[0].value,
           alias,
+          npmPackages: repoInfo.dependencies.npmPackages,
+          repoPath: repoInfo.path,
         })
       );
     },
@@ -238,35 +241,47 @@ export function recurTraceDeps(props: {
   extensions: string[];
   deps: DepType;
   visited: Set<string>;
+  repoInfos?: RepoInfo[];
 }) {
-  const { currentFilePath, alias, extensions, deps, visited } = props;
+  const { currentFilePath, alias, extensions, deps, visited, repoInfos } =
+    props;
   if (visited.has(currentFilePath)) {
     return;
   }
   visited.add(currentFilePath);
 
   const depFiles = [];
+  const depNpms = [];
+
   for (const literal of findDeps({
     filePath: currentFilePath,
     alias,
+    repoInfo: repoInfos.find((repo) => currentFilePath.includes(repo.path)),
   })) {
-    for (const depPath of getPossiblePaths({
+    const localDeps = getPossiblePaths({
       filePath: literal,
       extensions,
-    })) {
+    });
+
+    for (const depPath of localDeps) {
       depFiles.push(depPath);
+    }
+
+    if (isReposNpm(literal)) {
+      depNpms.push(literal);
     }
   }
 
-  deps.set(currentFilePath, depFiles);
+  deps.set(currentFilePath, [...depFiles, ...depNpms]);
 
   for (const depFile of depFiles) {
     recurTraceDeps({
-      currentFilePath: depFile,
+      currentFilePath: depFile, // only set depFile, npm packages should not trace
       alias,
       extensions,
       deps,
       visited,
+      repoInfos,
     });
   }
 }

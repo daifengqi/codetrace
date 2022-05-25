@@ -12,11 +12,13 @@ importers:
       log-symbols: 4.1.0
       ora: 5.4.1
       typescript: ^4.6.3
+      yaml: ^2.1.0
     dependencies:
       cac: 6.7.12
       chalk: 4.1.2
       log-symbols: 4.1.0
       ora: 5.4.1
+      yaml: 2.1.0
     devDependencies:
       '@babel/parser': 7.17.10
       '@babel/traverse': 7.17.10
@@ -426,4 +428,9 @@ packages:
     resolution: {integrity: sha1-8LDc+RW8X/FSivrbLA4XtTLaL+g=}
     dependencies:
       defaults: 1.0.3
+    dev: false
+
+  /yaml/2.1.0:
+    resolution: {integrity: sha512-OuAINfTsoJrY5H7CBWnKZhX6nZciXBydrMtTHr1dC4nP40X5jyTIVlogZHxSlVZM8zSgXRfgZGsaHF4+pV+JRw==}
+    engines: {node: '>= 14'}
     dev: false

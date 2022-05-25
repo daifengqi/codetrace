@@ -14,3 +14,7 @@ export function error_log(...text: any) {
 export function warn_log(...text: any) {
   log(`${logSymbols.warning} ${chalk.yellow(...text)}\n`);
 }
+
+export function message_log(...text: any) {
+  log(`${logSymbols.info} ${chalk.cyan(...text)}\n`);
+}

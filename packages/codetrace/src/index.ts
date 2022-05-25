@@ -6,22 +6,19 @@ import { main } from "./core/main";
 import { getGitDiff } from "./options/git";
 import { Params } from "./types";
 import { readConfig } from "./io/read-config";
-
-const spinner = ora("Analyzing the dependency graph... \n");
+import { message_log } from "./utils/cli";
 
 export function run(params: Params) {
-  spinner.start();
-
   const config = readConfig();
   // handlers is the executed result of plugins
   const { plugins: handlers } = config;
 
-  return Promise.resolve(main({ config, params, handlers })).finally(() => {
-    spinner.stop();
-  });
+  return Promise.resolve(main({ config, params, handlers }));
 }
 
-export async function index() {
+export async function index(beforeStart?: () => void) {
+  beforeStart?.();
+
   const cli = cac(trace);
 
   cli
@@ -40,8 +37,8 @@ export async function index() {
         return;
       }
       if (options.show) {
-        console.log("options", options);
-        console.log("params", params);
+        message_log("options", options);
+        message_log("params", params);
         const files = params;
 
         return;

@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { cdepsJson, depsJson } from "../constants";
-import { DepType } from "../types/dep";
+import { DepType } from "../types/file";
 import { removeLastFile } from "../utils";
 
 function writeFile(file: string, content: string) {
