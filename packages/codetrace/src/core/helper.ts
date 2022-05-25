@@ -91,7 +91,7 @@ function isNpm(props: { library: string; npmPackages: string[] }) {
   return npmPackages.includes(library);
 }
 
-function getReposNpm(repoPath: string, name: string) {
+export function getReposNpm(repoPath: string, name: string) {
   return `${repoPath}:${name}`;
 }
 

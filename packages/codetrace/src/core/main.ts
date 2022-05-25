@@ -13,6 +13,7 @@ import {
   recurTraceDeps,
   recurCollectFiles,
 } from "./helper";
+import { resolveNpmChanges } from "./pkgjson";
 
 export function main(props: {
   config: Config;
@@ -66,8 +67,10 @@ export function main(props: {
 
   // collect
   visited.clear();
+  const npmChanges = resolveNpmChanges(repoInfos);
+
   recurCollectFiles({
-    diffFileList: files,
+    diffFileList: [...files, ...npmChanges], // add npm dependency changes
     visited,
     endDirs,
     targetFilesSet,

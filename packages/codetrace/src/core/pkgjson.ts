@@ -1,14 +1,16 @@
 import { execSync } from "child_process";
 import { fstat, readFileSync } from "fs";
 import path from "path";
+import { RepoInfo } from "../types/file";
 import { existFile, existFolder } from "../utils";
 import { parsePkgJson } from "../utils/json";
+import { getReposNpm } from "./helper";
 
-export function getCurrentPkgJsonPath(current: string) {
+function getCurrentPkgJsonPath(current: string) {
   return `${current}${path.sep}package.json`;
 }
 
-export function getFirstPkgJsonContent(entry: string) {
+function getFirstPkgJsonContent(entry: string) {
   let current;
 
   if (existFile(entry)) {
@@ -29,7 +31,7 @@ export function getFirstPkgJsonContent(entry: string) {
   }
 }
 
-export function getPkgJsonChangedDeps(entry: string, level?: number) {
+function getPkgJsonChangedDeps(entry: string, level?: number) {
   let current = path.dirname(entry);
   let changedDeps = new Set<string>();
 
@@ -84,4 +86,19 @@ function getPkgJsonDiff(pkgJsonPath: string) {
   const newDeps = Object.keys(parsePkgJson(newFile)?.dependencies || {});
 
   return findDiffSet(oldDeps, newDeps);
+}
+
+export function resolveNpmChanges(repoInfos: RepoInfo[]) {
+  const npmChanges: string[] = [];
+
+  for (const repo of repoInfos) {
+    const pkgJsonPath = path.join(repo.path, "package.json");
+    const diffNpmPackags = getPkgJsonDiff(pkgJsonPath);
+
+    for (const pkg of diffNpmPackags) {
+      npmChanges.push(getReposNpm(repo.path, pkg));
+    }
+  }
+
+  return npmChanges;
 }
