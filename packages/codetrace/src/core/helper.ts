@@ -9,6 +9,7 @@ import {
   replaceAlias,
 } from "../utils";
 import { parsePkgJson } from "../utils/json";
+import { getReposNpm, isNpm, isReposNpm } from "../utils/repo";
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 
@@ -78,26 +79,13 @@ export function initNodeModuleDeps(props: {
   return nodeModuleDeps;
 }
 
-export function isNodeModuleDeps(props: {
-  filePath: string;
-  nodeModuleDeps: string[] | Set<string>;
-}) {
-  const { filePath, nodeModuleDeps } = props;
-  return [...nodeModuleDeps].some((name) => filePath.startsWith(name));
-}
-
-function isNpm(props: { library: string; npmPackages: string[] }) {
-  const { library, npmPackages } = props;
-  return npmPackages.includes(library);
-}
-
-export function getReposNpm(repoPath: string, name: string) {
-  return `${repoPath}:${name}`;
-}
-
-function isReposNpm(name: string) {
-  return name.includes(":");
-}
+// function isNodeModuleDeps(props: {
+//   filePath: string;
+//   nodeModuleDeps: string[] | Set<string>;
+// }) {
+//   const { filePath, nodeModuleDeps } = props;
+//   return [...nodeModuleDeps].some((name) => filePath.startsWith(name));
+// }
 
 export function processImportModule(props: {
   filePath: string;

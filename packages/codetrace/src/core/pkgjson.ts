@@ -4,7 +4,7 @@ import path from "path";
 import { RepoInfo } from "../types/file";
 import { existFile, existFolder } from "../utils";
 import { parsePkgJson } from "../utils/json";
-import { getReposNpm } from "./helper";
+import { getReposNpm } from "../utils/repo";
 
 function getCurrentPkgJsonPath(current: string) {
   return `${current}${path.sep}package.json`;
