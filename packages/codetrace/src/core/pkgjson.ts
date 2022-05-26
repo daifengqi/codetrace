@@ -1,12 +1,12 @@
 import { execSync } from "child_process";
-import { fstat, readFileSync } from "fs";
+import { readFileSync } from "fs";
 import path from "path";
 import { RepoInfo } from "../types/file";
 import { existFile, existFolder } from "../utils";
 import { parsePkgJson } from "../utils/json";
 import { getReposNpm } from "../utils/repo";
 
-function getCurrentPkgJsonPath(current: string) {
+export function getCurrentPkgJsonPath(current: string) {
   return `${current}${path.sep}package.json`;
 }
 
