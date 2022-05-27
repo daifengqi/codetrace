@@ -1,6 +1,6 @@
 {
   "name": "codetrace",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Trace the influence of code change based on dependency graph; improve the efficiency of Quality Assessment.",
   "scripts": {
     "test": "npm run build && node dist/cli.js",
