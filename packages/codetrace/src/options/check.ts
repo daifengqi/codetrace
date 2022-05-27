@@ -1,9 +1,14 @@
 import { readFileSync } from "fs";
 import { cdepsJson, depsJson } from "../constants";
-import { hitTarget } from "../core/helper";
+import { filterFilesByDirLevel, hitTarget } from "../core/helper";
 import { DepMap, DirPath, FilePath } from "../types/file";
 import { existFile, existFolder } from "../utils";
-import { error_log, message_log } from "../utils/cli";
+import {
+  arrow_join_log,
+  error_log,
+  message_log,
+  success_log,
+} from "../utils/cli";
 
 function parseMap(text: string) {
   return new Map(Object.entries(JSON.parse(text))) as DepMap;
@@ -67,7 +72,7 @@ export function checkTraceResult(options: {
       return;
     }
 
-    const records = [];
+    const records: string[][] = [];
     dfs({
       current: src,
       record: [],
@@ -76,7 +81,9 @@ export function checkTraceResult(options: {
       endDirs,
     });
 
-    return records;
+    records.forEach((record) => {
+      arrow_join_log(record);
+    });
   }
 
   if (!src && tar) {
@@ -90,18 +97,42 @@ export function checkTraceResult(options: {
   }
 
   if (src && tar) {
-    if (!Object.keys(deps).includes(src)) {
+    if (!cdeps.has(src)) {
       error_log(
         `No ${src} file in dependency graph; please run \`npx trace\`.`
       );
       return;
     }
-    if (!Object.keys(cdeps).includes(src)) {
-      error_log(
-        `No ${tar} file in inverted dependency graph; please run \`npx trace\`.`
-      );
+    const records: string[][] = [];
+    dfs({
+      current: src,
+      record: [],
+      records,
+      graph: cdeps,
+      endDirs,
+    });
+
+    const targetFiles = records.map((p) => p[p.length - 1]);
+    const targetDirsSet = filterFilesByDirLevel({
+      endDirs,
+      targetFiles,
+    });
+
+    if (!targetDirsSet.has(tar)) {
+      error_log(`Cannot trace from ${src} to ${tar}.`);
       return;
     }
-    // TODO: finger out the path
+
+    const targetRecords = records.filter((p) => {
+      const filePath = p[p.length - 1];
+      if (filePath.startsWith(tar)) {
+        return true;
+      }
+      return false;
+    });
+
+    targetRecords.forEach((record) => {
+      arrow_join_log(record);
+    });
   }
 }

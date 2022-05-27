@@ -18,3 +18,7 @@ export function warn_log(...text: any) {
 export function message_log(...text: any) {
   log(`${logSymbols.info} ${chalk.cyan(...text)}\n`);
 }
+
+export function arrow_join_log(record: string[]) {
+  message_log(record.join(" -> "));
+}
