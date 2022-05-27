@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { cdepsJson, depsJson } from "../constants";
-import { DepType } from "../types/file";
+import { DepMap } from "../types/file";
 import { removeLastFile } from "../utils";
 
 function writeFile(file: string, content: string) {
@@ -16,7 +16,7 @@ function map2JSON(m: Map<any, any>) {
   return JSON.stringify(Object.fromEntries(m));
 }
 
-export function writeDeps(props: { deps: DepType; cdeps: DepType }) {
+export function writeDeps(props: { deps: DepMap; cdeps: DepMap }) {
   const { deps, cdeps } = props;
 
   writeFile(depsJson, map2JSON(deps));

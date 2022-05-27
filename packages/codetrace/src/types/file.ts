@@ -1,4 +1,4 @@
-export type DepType = Map<string, string[]>;
+export type DepMap = Map<string, string[]>;
 
 export type PkgJSON = {
   name: string;
@@ -10,8 +10,8 @@ export type PkgJSON = {
 
 type WorkSpace = string;
 type RepoName = string;
-
-export type SpaceMap = Record<RepoName, WorkSpace>;
+export type FilePath = string;
+export type DirPath = string;
 
 export type YamlType = {
   packages: string[];

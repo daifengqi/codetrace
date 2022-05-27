@@ -48,3 +48,10 @@ export function existFile(path: string) {
 export function existFolder(path: string) {
   return fs.existsSync(path) && fs.statSync(path).isDirectory();
 }
+
+export function parseParams(params: string[]) {
+  return {
+    src: params?.find((p) => p.startsWith("src="))?.substring(4),
+    tar: params?.find((p) => p.startsWith("tar="))?.substring(4),
+  };
+}

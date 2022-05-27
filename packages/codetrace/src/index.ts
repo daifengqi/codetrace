@@ -7,6 +7,8 @@ import { getGitDiff } from "./options/git";
 import { Params } from "./types";
 import { readConfig } from "./io/read-config";
 import { message_log } from "./utils/cli";
+import { parseParams } from "./utils";
+import { checkTraceResult } from "./options/check";
 
 export function run(params: Params) {
   const config = readConfig();
@@ -25,28 +27,39 @@ export async function index(beforeStart?: () => void) {
     .command("[...params]", "")
     .option("-i, --init", "Create a config file in root dir.")
     .option("-g, --git", "Use git diff files to track influenced result.")
-    .option("-s, --show", "Show the trace result of a single file")
-    .action((params, options) => {
-      if (options.init) {
-        writeDefaultConfig();
-        return;
-      }
-      if (options.git) {
-        const diffFiles = getGitDiff();
-        run({ diff_files: diffFiles });
-        return;
-      }
-      if (options.show) {
-        message_log("options", options);
-        message_log("params", params);
-        const files = params;
+    .option(
+      "-c, --check",
+      "[src?=file_name tar?=dir_name] Check the trace result of source or targe"
+    )
+    .action(
+      (
+        params: string[],
+        options: { init?: boolean; git?: boolean; check?: boolean }
+      ) => {
+        if (options.init) {
+          writeDefaultConfig();
+          return;
+        }
+        if (options.git) {
+          const diffFiles = getGitDiff();
+          run({ diff_files: diffFiles });
+          return;
+        }
+        if (options.check) {
+          const { src, tar } = parseParams(params);
+          const config = readConfig();
+          checkTraceResult({
+            src,
+            tar,
+            endDirs: config.endDirs,
+          });
+          return;
+        }
 
-        return;
+        // default run with config
+        run({});
       }
-
-      // default run with config
-      run({});
-    });
+    );
 
   cli.help();
 

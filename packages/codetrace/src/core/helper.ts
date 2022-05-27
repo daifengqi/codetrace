@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import path from "path";
 import { Config, Params } from "../types";
-import { DepType, RepoInfo, SpaceMap } from "../types/file";
+import { DepMap, RepoInfo } from "../types/file";
 import {
   existValidFile,
   isAlias,
@@ -44,8 +44,8 @@ export function initConfig(props: { config: Config; params?: Params }) {
 
 export function initVariables() {
   return {
-    deps: new Map<string, string[]>() as DepType,
-    cdeps: new Map<string, string[]>() as DepType, // converted Deps
+    deps: new Map<string, string[]>() as DepMap,
+    cdeps: new Map<string, string[]>() as DepMap, // converted Deps
     visited: new Set<string>(),
     targetFilesSet: new Set<string>(),
   };
@@ -227,7 +227,7 @@ export function recurTraceDeps(props: {
   currentFilePath: string;
   alias: Record<string, string>;
   extensions: string[];
-  deps: DepType;
+  deps: DepMap;
   visited: Set<string>;
   repoInfos?: RepoInfo[];
 }) {
@@ -274,7 +274,7 @@ export function recurTraceDeps(props: {
   }
 }
 
-export function recurInvertDeps(props: { deps: DepType; cdeps: DepType }) {
+export function recurInvertDeps(props: { deps: DepMap; cdeps: DepMap }) {
   const { deps, cdeps } = props;
   for (const [file, depFiles] of deps.entries()) {
     for (const depFile of depFiles) {
@@ -287,12 +287,25 @@ export function recurInvertDeps(props: { deps: DepType; cdeps: DepType }) {
   }
 }
 
+export function hitTarget(props: { filePath: string; endDirs: string[] }) {
+  const { filePath, endDirs } = props;
+  const { sep } = path;
+
+  for (const dirName of endDirs) {
+    if (filePath.indexOf(`${sep}${dirName}${sep}`) !== -1) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export function recurCollectFiles(props: {
   diffFileList: string[];
   visited: Set<string>;
   endDirs: string[];
   targetFilesSet: Set<string>;
-  cdeps: DepType;
+  cdeps: DepMap;
 }) {
   const { diffFileList, visited, endDirs, targetFilesSet, cdeps } = props;
 
@@ -302,12 +315,9 @@ export function recurCollectFiles(props: {
     }
     visited.add(filePath);
 
-    endDirs.forEach((dirName) => {
-      const sep = path.sep;
-      if (filePath.indexOf(`${sep}${dirName}${sep}`) !== -1) {
-        targetFilesSet.add(filePath);
-      }
-    });
+    if (hitTarget({ filePath, endDirs })) {
+      targetFilesSet.add(filePath);
+    }
 
     const parentList = cdeps.get(filePath);
 
